@@ -31,14 +31,15 @@ const isTest = argv.test;
 const inputReader = new InputReader();
 
 console.log(chalk.bold.yellow("\n🌲 Advent Of Code 2022 🌲\n"));
+
 for (const day of days) {
-    console.log(`${chalk.gray.dim("•")} ${chalk.bold.blue("Day %d")}`, day);
+    console.group(`${chalk.gray.dim("•")} ${chalk.bold.blue("Day %d")}`, day);
 
     let puzzle: PuzzleRunner | null = null;
     try {
         puzzle = new PuzzleRunner(day);
     } catch (e) {
-        console.log(`  ${chalk.red("No puzzle model loadable.")}`);
+        console.log(chalk.red("No puzzle model loadable."));
         continue;
     }
 
@@ -46,24 +47,27 @@ for (const day of days) {
     try {
         input = inputReader.readLines(day, isTest);
     } catch {
-        console.log(`  ${chalk.red("No input loadable.")}`);
+        console.log(chalk.red("No input loadable."));
         continue;
     }
 
     for (const part of parts) {
-        console.log(`  ${chalk.gray.dim("•")} ${chalk.cyanBright("Part %d")}`, part);
+        console.group(`${chalk.gray.dim("•")} ${chalk.cyanBright("Part %d")}`, part);
         const output = puzzle.solvePart(input, part);
 
         if (!isTest) {
-            console.log(`    ${chalk.yellow("→")} ${output}`);
+            console.log(`${chalk.yellow("→")} ${output}`);
         } else {
             const expected = puzzle.getExpectedOutput(part);
             if (output == expected) {
-                console.log(`    ${chalk.green("✓")} Passed.`);
+                console.log(`${chalk.green("✓")} Passed.`);
             } else {
-                console.log(`    ${chalk.red("✗")} Failed. Expected ${expected}, got ${chalk.bold(output)}.`);
+                console.log(`${chalk.red("✗")} Failed. Expected ${expected}, got ${chalk.bold(output)}.`);
             }
         }
+
+        console.groupEnd();
     }
+    console.groupEnd();
 }
 console.log();
