@@ -1,8 +1,11 @@
 import chalk from "chalk";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
+import * as fs from "fs";
 
-import { InputReader, PuzzleRunner, TPuzzleInput } from "./utils";
+import { InputReader, PuzzleRunner, TPuzzleInput, createPuzzleFromTemplate } from "./utils";
+
+console.log(chalk.bold.yellow("\n🌲 Advent Of Code 2022 🌲\n"));
 
 const argv = yargs(hideBin(process.argv))
     .option("days", {
@@ -17,6 +20,9 @@ const argv = yargs(hideBin(process.argv))
         array: true,
         description: "The part of the puzzle to run. Defaults to '1,2', so all.",
     })
+    .option("create", {
+        type: "boolean",
+    })
     .option("test", {
         type: "boolean",
         default: false,
@@ -28,10 +34,28 @@ const days = argv.days || [new Date().getDate()];
 const parts = argv.parts || [1, 2];
 const isTest = argv.test;
 
+if (argv.create) {
+    for (const day of days) {
+        if (createPuzzleFromTemplate(day)) {
+            console.log(`${chalk.green("✓")} Created puzzle environment for day ${day}.`);
+        } else {
+            console.log(
+                `${chalk.red("✗")} Failed to create puzzle environment. ` +
+                    `Does an environment for day ${day} already exist?`
+            );
+        }
+    }
+
+    console.log();
+    process.exit(0);
+}
+
+const statistics = {
+    passed: 0,
+    failed: 0,
+};
+
 const inputReader = new InputReader();
-
-console.log(chalk.bold.yellow("\n🌲 Advent Of Code 2022 🌲\n"));
-
 for (const day of days) {
     console.group(`${chalk.gray.dim("•")} ${chalk.bold.blue("Day %d")}`, day);
 
@@ -61,8 +85,10 @@ for (const day of days) {
             const expected = puzzle.getExpectedOutput(part);
             if (output == expected) {
                 console.log(`${chalk.green("✓")} Passed.`);
+                statistics.passed++;
             } else {
                 console.log(`${chalk.red("✗")} Failed. Expected ${expected}, got ${chalk.bold(output)}.`);
+                statistics.failed++;
             }
         }
 
@@ -71,3 +97,5 @@ for (const day of days) {
     console.groupEnd();
 }
 console.log();
+
+process.exit(statistics.failed > 0 ? 1 : 0);

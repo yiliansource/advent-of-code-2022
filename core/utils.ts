@@ -40,3 +40,17 @@ export class PuzzleRunner<TPuzzleOutput extends unknown = unknown> {
         return this.model.expectedOutput[part - 1];
     }
 }
+
+export function createPuzzleFromTemplate(day: number): boolean {
+    const environmentPath = path.join(__dirname, "..", "puzzles", day.toString().padStart(2, "0"));
+    if (fs.existsSync(environmentPath)) {
+        return false;
+    }
+
+    fs.mkdirSync(environmentPath, { recursive: true });
+    fs.copyFileSync(path.join(__dirname, "puzzle.ts.template"), path.join(environmentPath, "puzzle.ts"));
+    fs.writeFileSync(path.join(environmentPath, "input.txt"), "");
+    fs.writeFileSync(path.join(environmentPath, "input.test.txt"), "");
+
+    return true;
+}

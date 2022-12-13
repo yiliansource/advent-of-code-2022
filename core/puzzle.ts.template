@@ -1,0 +1,7 @@
+import { PuzzleModel } from "../../core/utils";
+
+export default {
+    day: 0,
+    expectedOutput: [undefined, undefined],
+    solvers: [(input) => {}, (input) => {}],
+} as PuzzleModel<unknown>;
